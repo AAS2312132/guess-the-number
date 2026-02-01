@@ -4,8 +4,11 @@ const guessInput = document.getElementById("guessInput");
 const resultMsg = document.getElementById("resultMsg");
 const retryBtn = document.getElementById("retryBtn");
 const historyList = document.getElementById("historyList");
+const errorMsg = document.getElementById("errorMsg");
+const rangeSelect = document.getElementById("rangeSelect");
 
 let secretNumber = null;
+let maxNumber = 100;
 let attempts = 0;
 let guesses = [];
 
@@ -23,6 +26,15 @@ function setResult(text) {
   show(resultMsg);
 }
 
+function clearResult() {
+  resultMsg.textContent = "";
+  hide(resultMsg);
+}
+
+function generateSecret() {
+  secretNumber = Math.floor(Math.random() * maxNumber) + 1;
+}
+
 function loadHistory() {
   const data = localStorage.getItem(STORAGE_KEY);
   if (!data) return [];
@@ -37,6 +49,7 @@ function saveGameToHistory() {
   const history = loadHistory();
   history.unshift({
     date: new Date().toLocaleString(),
+    maxNumber: maxNumber,
     secretNumber: secretNumber,
     attempts: attempts,
     guesses: guesses
@@ -60,6 +73,7 @@ function renderHistory() {
     li.innerHTML = `
       <strong>Hra #${history.length - index}</strong><br>
       Datum: ${game.date}<br>
+      Rozsah: 1–${game.maxNumber}<br>
       Tajné číslo: ${game.secretNumber}<br>
       Pokusy: ${game.attempts}<br>
       Tipy: ${game.guesses.join(", ")}
@@ -68,31 +82,68 @@ function renderHistory() {
   });
 }
 
+function heatMessage(diff) {
+  if (diff === 0) return "Gratuluji! Uhodl jsi.";
+  if (diff <= 2) return "🔥 Hoří! Jsi extrémně blízko!";
+  if (diff <= 5) return "🌡️ Hodně přihořívá!";
+  if (diff <= 10) return "🙂 Přihořívá.";
+  if (diff <= 20) return "😐 Jsi docela daleko.";
+  return "🥶 Ledově daleko.";
+}
+
+// jen čísla do inputu
+guessInput.addEventListener("input", () => {
+  guessInput.value = guessInput.value.replace(/[^0-9]/g, "");
+});
+
 startBtn.addEventListener("click", () => {
-  secretNumber = Math.floor(Math.random() * 100) + 1;
+  maxNumber = Number(rangeSelect.value);
   attempts = 0;
   guesses = [];
+  generateSecret();
 
   hide(startBtn);
   hide(retryBtn);
-  show(gameForm);
-  hide(resultMsg);
+  clearResult();
 
   guessInput.value = "";
+  guessInput.classList.remove("invalid");
+  hide(errorMsg);
+
+  show(gameForm);
   guessInput.focus();
 });
 
 gameForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const guess = Number(guessInput.value);
+  const value = guessInput.value.trim();
+
+  if (value === "") {
+    guessInput.classList.add("invalid");
+    show(errorMsg);
+    return;
+  }
+
+  guessInput.classList.remove("invalid");
+  hide(errorMsg);
+
+  const guess = Number(value);
+
+  if (guess < 1 || guess > maxNumber) {
+    setResult(`Zadej číslo v rozsahu 1–${maxNumber}.`);
+    return;
+  }
+
   attempts++;
   guesses.push(guess);
 
+  const diff = Math.abs(secretNumber - guess);
+
   if (guess < secretNumber) {
-    setResult("Moc nízko!");
+    setResult("Moc nízko! " + heatMessage(diff));
   } else if (guess > secretNumber) {
-    setResult("Moc vysoko!");
+    setResult("Moc vysoko! " + heatMessage(diff));
   } else {
     setResult("Gratuluji! Uhodl jsi.");
     hide(gameForm);
@@ -107,15 +158,19 @@ gameForm.addEventListener("submit", (e) => {
 });
 
 retryBtn.addEventListener("click", () => {
-  secretNumber = Math.floor(Math.random() * 100) + 1;
+  maxNumber = Number(rangeSelect.value);
   attempts = 0;
   guesses = [];
+  generateSecret();
 
+  clearResult();
   hide(retryBtn);
-  show(gameForm);
-  hide(resultMsg);
 
   guessInput.value = "";
+  guessInput.classList.remove("invalid");
+  hide(errorMsg);
+
+  show(gameForm);
   guessInput.focus();
 });
 

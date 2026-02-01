@@ -10,12 +10,23 @@
   <div class="container">
     <h1>Guess The Number</h1>
 
+    <div class="difficulty">
+      <label for="rangeSelect">Obtížnost:</label>
+      <select id="rangeSelect">
+        <option value="10">1–10</option>
+        <option value="100" selected>1–100</option>
+        <option value="1000">1–1000</option>
+      </select>
+    </div>
+
     <button id="startBtn">Začít hru</button>
 
     <form id="gameForm" class="hidden">
       <label for="guessInput">Zadej číslo:</label>
-      <input id="guessInput" type="text" autocomplete="off" />
+      <input id="guessInput" type="text" inputmode="numeric" autocomplete="off" />
       <button type="submit">Tipnout</button>
+
+      <p id="errorMsg" class="error hidden">Zadej číslo!</p>
     </form>
 
     <p id="resultMsg" class="result hidden"></p>
