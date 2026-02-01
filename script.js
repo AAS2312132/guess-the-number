@@ -2,6 +2,7 @@ const startBtn = document.getElementById("startBtn");
 const gameForm = document.getElementById("gameForm");
 const guessInput = document.getElementById("guessInput");
 const resultMsg = document.getElementById("resultMsg");
+const retryBtn = document.getElementById("retryBtn");
 
 let secretNumber = null;
 
@@ -12,13 +13,20 @@ function hide(el) {
   el.classList.add("hidden");
 }
 
+function setResult(text) {
+  resultMsg.textContent = text;
+  show(resultMsg);
+}
+
 startBtn.addEventListener("click", () => {
   secretNumber = Math.floor(Math.random() * 100) + 1;
+
   hide(startBtn);
+  hide(retryBtn);
   show(gameForm);
+  hide(resultMsg);
 
   guessInput.value = "";
-  hide(resultMsg);
   guessInput.focus();
 });
 
@@ -28,15 +36,25 @@ gameForm.addEventListener("submit", (e) => {
   const guess = Number(guessInput.value);
 
   if (guess < secretNumber) {
-    resultMsg.textContent = "Moc nízko!";
-    show(resultMsg);
+    setResult("Moc nízko!");
   } else if (guess > secretNumber) {
-    resultMsg.textContent = "Moc vysoko!";
-    show(resultMsg);
+    setResult("Moc vysoko!");
   } else {
-    resultMsg.textContent = "Gratuluji! Uhodl jsi.";
-    show(resultMsg);
+    setResult("Gratuluji! Uhodl jsi.");
+    hide(gameForm);
+    show(retryBtn);
   }
+
+  guessInput.value = "";
+  guessInput.focus();
+});
+
+retryBtn.addEventListener("click", () => {
+  secretNumber = Math.floor(Math.random() * 100) + 1;
+
+  hide(retryBtn);
+  show(gameForm);
+  hide(resultMsg);
 
   guessInput.value = "";
   guessInput.focus();
