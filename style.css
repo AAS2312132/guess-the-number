@@ -14,6 +14,60 @@ body {
   border: 1px solid #ddd;
 }
 
+.hidden {
+  display: none;
+}
+
+button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #2d6cdf;
+  color: white;
+  margin-top: 10px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  box-sizing: border-box;
+}
+
+input.invalid {
+  border: 2px solid red;
+}
+
+.result {
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.error {
+  margin-top: 8px;
+  color: red;
+  font-size: 14px;
+}
+
+.difficulty {
+  margin-bottom: 10px;
+}
+
 .history {
   padding-left: 18px;
+}
+
+.history li {
+  margin-bottom: 10px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 8px;
+  border-radius: 8px;
 }
