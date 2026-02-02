@@ -91,7 +91,6 @@ function heatMessage(diff) {
   return "🥶 Ledově daleko.";
 }
 
-// jen čísla do inputu
 guessInput.addEventListener("input", () => {
   guessInput.value = guessInput.value.replace(/[^0-9]/g, "");
 });
